@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Daily Temperature – Kuala Terengganu</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: #fff;
+    color: #111;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    padding: 3rem 1.5rem;
+  }
+
+  .container {
+    max-width: 860px;
+    margin: 0 auto;
+  }
+
+  h1 {
+    font-size: 1.4rem;
+    font-weight: 500;
+    margin-bottom: 0.25rem;
+  }
+
+  .subtitle {
+    color: #888;
+    font-size: 13px;
+    margin-bottom: 2rem;
+  }
+
+  .stats {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 2rem;
+  }
+
+  .stat {
+    border: 1px solid #e5e5e5;
+    border-radius: 8px;
+    padding: 0.85rem 1.1rem;
+    flex: 1;
+    min-width: 120px;
+  }
+
+  .stat-label {
+    font-size: 11px;
+    color: #999;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .stat-value {
+    font-size: 1.4rem;
+    font-weight: 500;
+  }
+
+  .chart-box {
+    border: 1px solid #e5e5e5;
+    border-radius: 8px;
+    padding: 1.25rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .legend {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    font-size: 12px;
+    color: #666;
+  }
+
+  .legend span {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 2px;
+    display: inline-block;
+  }
+
+  .chart-wrap {
+    position: relative;
+    height: 300px;
+  }
+
+  .note {
+    font-size: 12px;
+    color: #999;
+    margin-top: 1.5rem;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <h1>Daily Temperature — Kuala Terengganu</h1>
+  <p class="subtitle">1 Aug 2023 to 1 Aug 2024 &nbsp;·&nbsp; 367 days</p>
+
+  <div class="stats">
+    <div class="stat">
+      <div class="stat-label">Highest</div>
+      <div class="stat-value" style="color:#e05555;">34.2 °C</div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">Lowest</div>
+      <div class="stat-value" style="color:#3a8fd4;">22.6 °C</div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">Average</div>
+      <div class="stat-value">28.8 °C</div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">Total days</div>
+      <div class="stat-value">367</div>
+    </div>
+  </div>
+
+  <div class="chart-box">
+    <div class="legend">
+      <span><span class="dot" style="background:#e05555;"></span>Max</span>
+      <span><span class="dot" style="background:#3a8fd4;"></span>Min</span>
+      <span><span class="dot" style="background:#4aaa5e;"></span>Average</span>
+    </div>
+    <div class="chart-wrap">
+      <canvas id="chart" role="img" aria-label="Daily temperature chart for Kuala Terengganu Aug 2023 to Aug 2024">Daily temperature data KT 2023-2024.</canvas>
+    </div>
+  </div>
+
+  <p class="note">* Simulated data based on Kuala Terengganu's tropical climate patterns, including the northeast monsoon season (Nov–Mar).</p>
+
+</div>
+
+<script>
+const labels = ['2023-08-01','2023-08-06','2023-08-11','2023-08-16','2023-08-21','2023-08-26','2023-08-31','2023-09-05','2023-09-10','2023-09-15','2023-09-20','2023-09-25','2023-09-30','2023-10-05','2023-10-10','2023-10-15','2023-10-20','2023-10-25','2023-10-30','2023-11-04','2023-11-09','2023-11-14','2023-11-19','2023-11-24','2023-11-29','2023-12-04','2023-12-09','2023-12-14','2023-12-19','2023-12-24','2023-12-29','2024-01-03','2024-01-08','2024-01-13','2024-01-18','2024-01-23','2024-01-28','2024-02-02','2024-02-07','2024-02-12','2024-02-17','2024-02-22','2024-02-27','2024-03-03','2024-03-08','2024-03-13','2024-03-18','2024-03-23','2024-03-28','2024-04-02','2024-04-07','2024-04-12','2024-04-17','2024-04-22','2024-04-27','2024-05-02','2024-05-07','2024-05-12','2024-05-17','2024-05-22','2024-05-27','2024-06-01','2024-06-06','2024-06-11','2024-06-16','2024-06-21','2024-06-26','2024-07-01','2024-07-06','2024-07-11','2024-07-16','2024-07-21','2024-07-26','2024-07-31'];
+const maxs = [30.9,31.1,30.9,30.4,30.1,29.6,30.6,30.6,29.5,29.7,30.1,29.2,29.4,28.0,28.2,29.3,29.1,29.0,29.1,28.9,30.0,29.9,29.5,29.6,28.6,29.1,29.8,29.2,29.7,30.2,30.7,29.1,31.4,29.5,30.4,30.7,31.2,31.6,31.4,31.7,31.7,32.2,31.6,31.9,32.2,32.7,33.1,33.1,33.2,33.1,33.4,33.6,34.2,33.9,33.8,33.7,33.4,33.1,33.9,33.4,34.0,33.4,33.0,33.1,33.6,32.5,32.9,32.8,31.8,32.6,31.7,32.1,32.7,31.5];
+const mins = [25.8,25.6,25.7,24.4,25.1,24.8,25.0,24.2,23.8,23.9,24.2,24.2,23.3,23.4,23.2,23.5,24.1,23.4,22.6,23.8,23.8,23.8,23.9,24.7,23.1,23.1,24.6,24.1,23.9,24.2,24.5,24.2,25.2,24.5,25.9,25.1,25.5,25.7,26.2,25.9,26.3,26.2,26.8,26.5,26.5,26.7,28.1,27.5,28.0,28.2,28.1,28.4,28.4,28.1,29.0,27.9,27.9,27.7,27.7,28.4,28.6,28.2,28.1,27.6,27.8,27.9,26.4,26.6,27.0,27.2,25.5,26.2,26.5,25.7];
+const avgs = [28.4,28.3,28.3,27.4,27.6,27.2,27.8,27.4,26.6,26.8,27.2,26.7,26.4,25.7,25.7,26.4,26.6,26.2,25.9,26.4,26.9,26.9,26.7,27.1,25.8,26.1,27.2,26.6,26.8,27.2,27.6,26.6,28.3,27.0,28.1,27.9,28.4,28.6,28.8,28.8,29.0,29.2,29.2,29.2,29.4,29.7,30.6,30.3,30.6,30.6,30.7,31.0,31.3,31.0,31.4,30.8,30.6,30.4,30.8,30.9,31.3,30.8,30.5,30.4,30.7,30.2,29.6,29.7,29.4,29.9,28.6,29.1,29.6,28.6];
+
+new Chart(document.getElementById('chart'), {
+  type: 'line',
+  data: {
+    labels,
+    datasets: [
+      { label: 'Max', data: maxs, borderColor: '#e05555', borderWidth: 1.5, pointRadius: 2, fill: false, tension: 0.4 },
+      { label: 'Min', data: mins, borderColor: '#3a8fd4', borderWidth: 1.5, pointRadius: 2, fill: false, tension: 0.4 },
+      { label: 'Average', data: avgs, borderColor: '#4aaa5e', borderWidth: 1.5, borderDash: [5,3], pointRadius: 2, fill: false, tension: 0.4 }
+    ]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    interaction: { mode: 'index', intersect: false },
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        backgroundColor: '#fff',
+        borderColor: '#e5e5e5',
+        borderWidth: 1,
+        titleColor: '#888',
+        bodyColor: '#111',
+        padding: 10,
+        callbacks: { label: ctx => ` ${ctx.dataset.label}: ${ctx.parsed.y.toFixed(1)} °C` }
+      }
+    },
+    scales: {
+      x: {
+        ticks: { color: '#aaa', font: { size: 10 }, maxTicksLimit: 13, maxRotation: 45 },
+        grid: { color: '#f0f0f0' },
+        border: { color: '#e5e5e5' }
+      },
+      y: {
+        min: 20, max: 36,
+        ticks: { color: '#aaa', font: { size: 10 }, callback: v => v + ' °C' },
+        grid: { color: '#f0f0f0' },
+        border: { color: '#e5e5e5' }
+      }
+    }
+  }
+});
+</script>
+</body>
+</html>
